@@ -1,6 +1,18 @@
+/*
+甘露殿-https://t.me/jdredrain
+
+自动车监控脚本-M集卡抽奖
+https://raw.githubusercontent.com/msechen/jdrain/main/m_jd_wx_collectCard.js
+
+环境变量
+M_WX_COLLECT_CARD_URL  活动ID 
+
+即时任务，无需cron
+
+*/
 let mode = __dirname.includes('magic')
 const {Env} = mode ? require('./magic') : require('./magic')
-const $ = new Env('M集卡抽奖');
+const $ = new Env('自动车-M集卡抽奖');
 $.lz = 'LZ_TOKEN_KEY=lztokef1eb8494b0af868bd18bdaf8;LZ_TOKEN_VALUE=Aa5RE8RuY4X3zA==;';
 
 $.activityUrl = process.env.M_WX_COLLECT_CARD_URL
@@ -106,6 +118,12 @@ $.logic = async function () {
     await api('crm/pageVisit/insertCrmPageVisit',
         `venderId=${$.venderId}&elementId=${encodeURIComponent(
             '邀请')}&pageId=${$.activityId}&pin=${encodeURIComponent($.Pin)}`);
+    
+      await api('wxCollectCard/drawCard',
+        `sourceId=${$.shareUuid}&activityId=${$.activityId}&type=1&pinImg=${encodeURIComponent(
+            $.attrTouXiang)}&pin=${encodeURIComponent(
+            $.Pin)}&jdNick=${encodeURIComponent(
+            $.nickname)}`);
     let saveSource = await api('wxCollectCard/saveSource',
         `activityId=${$.activityId}&pinImg=${encodeURIComponent(
             $.attrTouXiang)}&pin=${encodeURIComponent(
@@ -194,6 +212,7 @@ $.after = async function () {
         }
         $.msg.push(message)
         $.msg.push($.activityUrl);
+        $.msg.push('\n甘露殿【https://t.me/jdredrain】')
     }
 }
 $.run().catch(reason => $.log(reason));
