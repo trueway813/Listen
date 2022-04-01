@@ -1,6 +1,18 @@
+/*
+甘露殿-https://t.me/jdredrain
+
+自动车监控脚本-M加购有礼
+https://raw.githubusercontent.com/msechen/jdrain/main/m_jd_wx_addCart.js
+
+环境变量
+M_WX_ADD_CART_URL  活动ID 
+
+即时任务，无需cron
+
+*/
 let mode = __dirname.includes('magic')
-const {Env} = mode ? require('./function/magic') : require('./function/magic')
-const $ = new Env('M加购有礼');
+const {Env} = mode ? require('../magic') : require('./magic')
+const $ = new Env('自动车-M加购有礼');
 $.lz = 'LZ_TOKEN_KEY=lztokef1eb8494b0af868bd18bdaf8;LZ_TOKEN_VALUE=Aa5RE8RuY4X3zA==;';
 $.activityUrl = process.env.M_WX_ADD_CART_URL
     ? process.env.M_WX_ADD_CART_URL
@@ -97,9 +109,6 @@ $.logic = async function () {
     await api('wxActionCommon/getUserInfo', `pin=${$.Pin}`)
     let info = await api(
         `miniProgramShareInfo/getInfo?activityId=${$.activityId}`);
-    if (info.result) {
-        $.shareMpTitle = info.data.shareMpTitle;
-    }
     if (content.needFollow && !content.hasFollow) {
         await api(`wxActionCommon/followShop`,
             `userId=${$.venderId}&activityId=${$.activityId}&buyerNick=${encodeURIComponent(
@@ -163,6 +172,7 @@ $.after = async function () {
     }
     $.msg.push(`\n${$.shopName}\n${$.shareMpTitle}\n`);
     $.msg.push($.activityUrl)
+    $.msg.push('\n甘露殿【https://t.me/jdredrain】')
 }
 $.run({filename: __filename}).catch(
     reason => $.log(reason));
